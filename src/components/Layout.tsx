@@ -8,7 +8,7 @@ export default function Layout() {
   return (
     <SidebarProvider>
       <div className="flex flex-col min-h-screen">
-        <header className="bg-sky-200 p-4">
+        <header className="p-4">
           <nav>
             <ul className="flex gap-4">
               <li>

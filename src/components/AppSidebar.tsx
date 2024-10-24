@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -12,12 +13,16 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 
+import { useAuth } from "./auth/hooks/useAuth";
+import { Button } from "./ui/button";
+
 const menuItems = [
   { icon: Home, label: 'Home', to: '/' },
   { icon: User, label: 'Profiles', to: '/profiles' },
 ];
 
 export function AppSidebar() {
+  const { handleLogout } = useAuth();
   return (
     <Sidebar>
       <SidebarContent>
@@ -39,6 +44,13 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <SidebarFooter>
+          <Button variant="outline" onClick={handleLogout}>
+            Logout
+          </Button>
+        </SidebarFooter>
+      </SidebarFooter>
     </Sidebar>
   );
 }

@@ -1,6 +1,8 @@
 import { Suspense } from 'react';
 import { RouteObject } from 'react-router-dom';
 
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+
 import { ProfilePage, ProfilesPage } from './ProfileComponents';
 
 export const profileRoutes: RouteObject[] = [
@@ -8,7 +10,9 @@ export const profileRoutes: RouteObject[] = [
     path: 'profiles',
     element: (
       <Suspense fallback={<div>Loading Profiles...</div>}>
-        <ProfilesPage />
+        <ProtectedRoute allowedRoles={['admin', 'viewer']}>
+          <ProfilesPage />
+        </ProtectedRoute>
       </Suspense>
     ),
     children: [
