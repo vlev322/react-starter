@@ -1,6 +1,7 @@
+import { Suspense } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 
-import { AppSidebar } from '@/components/app-sidebar';
+import { AppSidebar } from '@/components/AppSidebar';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
 export default function Layout() {
@@ -27,7 +28,9 @@ export default function Layout() {
           <AppSidebar />
           <main className="flex-grow p-4">
             <SidebarTrigger />
-            <Outlet />
+            <Suspense fallback={<div>Loading...</div>}>
+              <Outlet />
+            </Suspense>
           </main>
         </div>
         <footer className="bg-sky-200 p-4 text-center">
