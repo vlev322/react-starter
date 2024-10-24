@@ -1,8 +1,6 @@
-import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
 
-const ProfilesPage = lazy(() => import('../pages/ProfilesPage'));
-const ProfilePage = lazy(() => import('../pages/ProfilePage'));
+import { ProfilePage,ProfilesPage } from './ProfileComponents';
 
 export const profileRoutes: RouteObject[] = [
   {
@@ -16,4 +14,3 @@ export const profileRoutes: RouteObject[] = [
     ],
   },
 ];
-
