@@ -4,7 +4,6 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { useNavigate } from "react-router-dom";
 
 import { getUser, login } from '@/api/auth';
 import { User } from '@/types/base';

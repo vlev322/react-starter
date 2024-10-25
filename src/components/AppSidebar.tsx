@@ -1,5 +1,5 @@
 import { Home,User } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import {
   Sidebar,
@@ -23,6 +23,13 @@ const menuItems = [
 
 export function AppSidebar() {
   const { handleLogout } = useAuth();
+  const navigate = useNavigate();
+
+  const logout = async () => {
+    await handleLogout();
+    navigate('/login');
+  };
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -46,7 +53,7 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <SidebarFooter>
-          <Button variant="outline" onClick={handleLogout}>
+          <Button variant="outline" onClick={logout}>
             Logout
           </Button>
         </SidebarFooter>
