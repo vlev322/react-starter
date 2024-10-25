@@ -3,3 +3,8 @@ export type User = {
   email: string;
   role: string;
 };
+
+export type Post = {
+  id: number;
+  title: string;
+};

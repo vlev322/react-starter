@@ -1,4 +1,4 @@
-import { Home,User } from 'lucide-react';
+import { FileText,Home, User } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import {
@@ -19,6 +19,7 @@ import { Button } from "./ui/button";
 const menuItems = [
   { icon: Home, label: 'Home', to: '/' },
   { icon: User, label: 'Profiles', to: '/profiles' },
+  { icon: FileText, label: 'Star Wars', to: '/star-wars' },
 ];
 
 export function AppSidebar() {
@@ -61,4 +62,3 @@ export function AppSidebar() {
     </Sidebar>
   );
 }
-

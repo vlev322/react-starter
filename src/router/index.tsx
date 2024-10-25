@@ -4,9 +4,8 @@ import { createBrowserRouter } from 'react-router-dom';
 import LoginPage from "@/pages/LoginPage";
 
 import Layout from '../components/Layout';
-import { mainRoutes } from './routes';
+import { mainRoutes, profileRoutes,starWarsRoutes  } from './routes';
 import { NotFoundPage } from "./routes/main/NotFoundComponents";
-import { profileRoutes } from './routes/profile';
 
 const router = createBrowserRouter([
   {
@@ -22,6 +21,7 @@ const router = createBrowserRouter([
     children: [
       ...mainRoutes,
       ...profileRoutes,
+      ...starWarsRoutes,
       {
         path: '*',
         element: (
