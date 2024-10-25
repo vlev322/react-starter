@@ -1,30 +1,53 @@
-# React + TypeScript + Vite
+# React + TypeScript + Vite Project
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a modern web application built with React, TypeScript, and Vite. It features a robust architecture with Redux for state management, React Router for navigation, and a variety of UI components.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React 18 with TypeScript
+- Vite for fast development and building
+- Redux Toolkit for state management
+- React Router for navigation
+- Tailwind CSS for styling
+- Shadcn UI components
+- Authentication system
+- Protected routes
 
-## Expanding the ESLint configuration
+## Project Structure
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- `src/`
+  - `components/`: Reusable React components
+  - `pages/`: Page components for different routes
+  - `router/`: React Router configuration
+  - `state/`: Redux store and slices
+  - `styles/`: Global styles
+  - `api/`: API service functions
+  - `types/`: TypeScript type definitions
+  - `lib/`: Utility functions
+  - `hooks/`: Custom React hooks
 
-- Configure the top-level `parserOptions` property like this:
+## Getting Started
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+1. Clone the repository
+2. Install dependencies:
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+   ```bash
+   pnpm install
+   ```
+
+3. Start the development server:
+
+   ```bash
+   pnpm run dev
+   ```
+
+## Available Scripts
+
+- `pnpm run dev`: Start the development server
+- `pnpm run build`: Build the production-ready app
+- `pnpm run lint`: Run ESLint for code linting
+- `pnpm run preview`: Preview the built app locally
+
+## ESLint Configuration
+
+The project uses ESLint for code linting. To enable type-aware lint rules, update the `.eslintrc.cjs` file as follows:
