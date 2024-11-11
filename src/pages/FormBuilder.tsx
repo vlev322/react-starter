@@ -297,6 +297,7 @@ export default function FormBuilder() {
         <TabsList>
           <TabsTrigger value="builder">Form Builder</TabsTrigger>
           <TabsTrigger value="preview">Form Preview</TabsTrigger>
+          <TabsTrigger value="step">Step by Step</TabsTrigger>
         </TabsList>
 
         <TabsContent value="builder">
@@ -616,7 +617,6 @@ export default function FormBuilder() {
             </Card>
           </div>
         </TabsContent>
-
         <TabsContent value="preview">
           <div className="grid gap-4 md:grid-cols-2">
             {/* Form List */}
@@ -674,6 +674,62 @@ export default function FormBuilder() {
             <div className="space-y-4">
               {selectedFormId && (
                 <PreviewForm
+                  form={forms.find((f) => f.id === selectedFormId)!}
+                  onSubmit={handlePreviewSubmit}
+                />
+              )}
+
+              {formOutput && selectedFormId && (
+                <FormOutputDisplay
+                  form={forms.find((f) => f.id === selectedFormId)!}
+                  data={formOutput}
+                />
+              )}
+            </div>
+          </div>
+        </TabsContent>
+        <TabsContent value="step">
+          <div className="grid gap-4 md:grid-cols-2">
+            {/* Form List */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Saved Forms</CardTitle>
+                <CardDescription>
+                  Select a form to start the questionnaire
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {forms.map((form) => (
+                    <div
+                      key={form.id}
+                      className={cn(
+                        'flex items-center justify-between rounded border p-4',
+                        selectedFormId === form.id && 'border-primary',
+                      )}
+                    >
+                      <div>
+                        <h3 className="font-medium">{form.name}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {form.items.length} questions
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        onClick={() => viewForm(form.id)}
+                      >
+                        Start
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Step by Step Form */}
+            <div className="space-y-4">
+              {selectedFormId && (
+                <StepByStepForm
                   form={forms.find((f) => f.id === selectedFormId)!}
                   onSubmit={handlePreviewSubmit}
                 />
@@ -867,6 +923,170 @@ function FormOutputDisplay({
             </div>
           ))}
         </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+interface StepByStepFormProps {
+  form: CustomForm;
+  onSubmit: (formId: string, data: FormData) => void;
+}
+
+function StepByStepForm({ form, onSubmit }: StepByStepFormProps) {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [formData, setFormData] = useState<Record<string, any>>({});
+
+  const currentItem = form.items[currentStep];
+  const isLastStep = currentStep === form.items.length - 1;
+
+  // Create a form schema for just the current field instead of all fields
+  const currentFieldSchema = z.object({
+    [currentItem.name]: (() => {
+      let schema: z.ZodType;
+      switch (currentItem.type) {
+        case 'text':
+          schema = z.string();
+          break;
+        case 'number':
+          schema = z.coerce.number();
+          break;
+        case 'select':
+          schema = z.string();
+          break;
+        case 'file':
+          schema = z.instanceof(File).nullable();
+          break;
+        default:
+          schema = z.string();
+      }
+      return currentItem.required ? schema : schema.optional();
+    })(),
+  });
+
+  const stepForm = useForm<z.infer<typeof currentFieldSchema>>({
+    resolver: zodResolver(currentFieldSchema),
+    defaultValues: {
+      [currentItem.name]: formData[currentItem.name] || '',
+    },
+  });
+
+  const onStepSubmit = stepForm.handleSubmit((values) => {
+    const updatedData = {
+      ...formData,
+      [currentItem.name]: values[currentItem.name],
+    };
+    setFormData(updatedData);
+
+    if (isLastStep) {
+      onSubmit(form.id, updatedData);
+    } else {
+      setCurrentStep((prev) => prev + 1);
+    }
+  });
+
+  const handlePrevious = () => {
+    setCurrentStep((prev) => prev - 1);
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{form.name}</CardTitle>
+        <CardDescription>
+          Question {currentStep + 1} of {form.items.length}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...stepForm}>
+          <form onSubmit={onStepSubmit} className="space-y-4">
+            <FormField
+              key={currentItem.id}
+              control={stepForm.control}
+              name={currentItem.name}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    {currentItem.label}
+                    {currentItem.required && (
+                      <span className="ml-1 text-destructive">*</span>
+                    )}
+                  </FormLabel>
+                  {currentItem.type === 'text' && (
+                    <FormControl>
+                      <Input
+                        placeholder={(currentItem as TextInput).placeholder}
+                        {...field}
+                      />
+                    </FormControl>
+                  )}
+                  {currentItem.type === 'select' && (
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select an option" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {(currentItem as SelectInput).options.map((opt) => (
+                          <SelectItem key={opt} value={opt}>
+                            {opt}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                  {currentItem.type === 'number' && (
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min={(currentItem as NumberInput).min}
+                        max={(currentItem as NumberInput).max}
+                        {...field}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(value === '' ? '' : Number(value));
+                        }}
+                      />
+                    </FormControl>
+                  )}
+                  {currentItem.type === 'file' && (
+                    <FormControl>
+                      <Input
+                        type="file"
+                        accept={(
+                          currentItem as FileInput
+                        ).acceptedFileTypes?.join(',')}
+                        onChange={(e) => {
+                          const file = e.target.files?.[0] || null;
+                          field.onChange(file);
+                        }}
+                      />
+                    </FormControl>
+                  )}
+                  {currentItem.description && (
+                    <FormDescription>{currentItem.description}</FormDescription>
+                  )}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex justify-between">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handlePrevious}
+                disabled={currentStep === 0}
+              >
+                Previous
+              </Button>
+              <Button type="submit">{isLastStep ? 'Submit' : 'Next'}</Button>
+            </div>
+          </form>
+        </Form>
       </CardContent>
     </Card>
   );
