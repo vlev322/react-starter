@@ -4,7 +4,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import LoginPage from "@/pages/LoginPage";
 
 import Layout from '../components/Layout';
-import { mainRoutes, profileRoutes,starWarsRoutes  } from './routes';
+import { formBuilderRoutes, mainRoutes, profileRoutes,starWarsRoutes  } from './routes';
 import { NotFoundPage } from "./routes/main/NotFoundComponents";
 
 const router = createBrowserRouter([
@@ -22,6 +22,7 @@ const router = createBrowserRouter([
       ...mainRoutes,
       ...profileRoutes,
       ...starWarsRoutes,
+      ...formBuilderRoutes,
       {
         path: '*',
         element: (

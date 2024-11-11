@@ -20,6 +20,7 @@ const menuItems = [
   { icon: Home, label: 'Home', to: '/' },
   { icon: User, label: 'Profiles', to: '/profiles' },
   { icon: FileText, label: 'Star Wars', to: '/star-wars' },
+  { icon: FileText, label: 'Form Builder', to: '/form-builder' },
 ];
 
 export function AppSidebar() {
