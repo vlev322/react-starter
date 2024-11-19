@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -12,31 +11,23 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { Skeleton } from '@/components/ui/skeleton';
-import { StarWarsPerson, useGetPeopleQuery } from '@/state/starWars/starWarsApiSlice';
+import {
+  StarWarsPerson,
+  useGetPeopleQuery,
+} from '@/state/starWars/starWarsApiSlice';
 
 const StarWarsPeoplePage = () => {
-  const navigate = useNavigate();
   const location = useLocation();
-  const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const pageParam = params.get('page');
-    if (pageParam) {
-      setPage(parseInt(pageParam, 10));
-    }
-  }, [location.search]);
+  const searchParams = new URLSearchParams(location.search);
+  const page = Number(searchParams.get('page')) || 1;
 
   const {
     data: peopleData,
     isLoading,
+    isFetching,
     isError,
   } = useGetPeopleQuery({ page });
-
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
-    navigate(`?page=${newPage}`);
-  };
 
   if (isError) {
     return <div>Error loading Star Wars people data...</div>;
@@ -44,23 +35,34 @@ const StarWarsPeoplePage = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Star Wars People</h1>
-      {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <h1 className="mb-6 text-3xl font-bold">Star Wars People</h1>
+      {isLoading && (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {[...Array(10)].map((_, index) => (
-            <Card key={index}>
+            <Card key={index} className="w-52">
+              <CardHeader>
+                <Skeleton className="h-6 w-3/4" />
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+      )}
+      {isFetching ? (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {[...Array(10)].map((_, index) => (
+            <Card key={index} className="w-52">
               <CardHeader>
                 <Skeleton className="h-6 w-3/4" />
               </CardHeader>
               <CardContent>
-                <Skeleton className="h-4 w-1/2 mb-2" />
+                <Skeleton className="mb-2 h-4 w-1/2" />
                 <Skeleton className="h-4 w-2/3" />
               </CardContent>
             </Card>
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {peopleData?.results.map((person: StarWarsPerson) => (
             <Card key={person.name}>
               <CardHeader>
@@ -78,11 +80,7 @@ const StarWarsPeoplePage = () => {
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious
-              href={`?page=${page - 1}`}
-              onClick={(e) => {
-                e.preventDefault();
-                if (page > 1) handlePageChange(page - 1);
-              }}
+              href={peopleData?.previous ? `?page=${page - 1}` : '#'}
             />
           </PaginationItem>
           <PaginationItem>
@@ -93,11 +91,7 @@ const StarWarsPeoplePage = () => {
           </PaginationItem>
           <PaginationItem>
             <PaginationNext
-              href={`?page=${page + 1}`}
-              onClick={(e) => {
-                e.preventDefault();
-                if (peopleData?.next) handlePageChange(page + 1);
-              }}
+              href={peopleData?.next ? `?page=${page + 1}` : '#'}
             />
           </PaginationItem>
         </PaginationContent>
